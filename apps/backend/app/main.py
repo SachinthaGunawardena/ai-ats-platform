@@ -1,7 +1,13 @@
 from fastapi import FastAPI
 
-app = FastAPI()
+from app.api.candidate_routes import router as candidate_router
+
+app = FastAPI(title="AI ATS Platform")
+
+
+app.include_router(candidate_router)
+
 
 @app.get("/")
-def home():
-    return {"message": "Backend running successfully"}
+def root():
+    return {"message": "AI ATS Backend Running"}
