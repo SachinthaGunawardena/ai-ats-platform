@@ -1,8 +1,10 @@
 from docx import Document
 
-def extract_docx_text(file_path):
+
+def extract_text_from_docx(file_path: str):
+
     doc = Document(file_path)
 
     return "\n".join(
-        para.text for para in doc.paragraphs
+        [paragraph.text for paragraph in doc.paragraphs]
     )

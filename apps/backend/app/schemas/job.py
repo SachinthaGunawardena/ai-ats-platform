@@ -1,11 +1,12 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 
 class JobCreate(BaseModel):
     title: str
     description: str
-    requirements: str | None = None
+    requirements: Optional[str] = None
 
 
 class JobResponse(BaseModel):
