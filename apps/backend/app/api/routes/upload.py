@@ -64,17 +64,16 @@ async def upload_resume(file: UploadFile = File(...)):
             f"{unique_filename}"
         )
 
-        # Create temporary file
-        with tempfile.NamedTemporaryFile(
-            delete=False,
-            suffix=suffix
-        ) as temp_file:
+        uploads_dir = "uploads"
+        os.makedirs(uploads_dir, exist_ok=True)
 
-            temp_file.write(contents)
+        file_path = os.path.join(
+        uploads_dir,
+        unique_filename
+        )
 
-            temp_path = temp_file.name
-
-        print(temp_path)
+        with open(file_path, "wb") as f:
+            f.write(contents)
 
         # Upload to MinIO
         client.put_object(
@@ -87,20 +86,24 @@ async def upload_resume(file: UploadFile = File(...)):
 
         # Save metadata
         resume = Resume(
-            filename=file.filename,
-            object_name=object_path,
-            file_path=temp_path,
-            status="uploaded"
-        )
+    filename=file.filename,
+    object_name=object_path,
+    file_path=file_path,
+    status="uploaded"
+)
 
         db.add(resume)
-
         db.commit()
-
         db.refresh(resume)
 
-        # Trigger Celery task
+        print("AFTER DB SAVE")
+        print(f"Resume ID = {resume.id}")
+
+        print("BEFORE CELERY")
+
         process_resume.delay(resume.id)
+
+        print("AFTER CELERY")
 
         logger.info(f"Resume uploaded: {object_path}")
 

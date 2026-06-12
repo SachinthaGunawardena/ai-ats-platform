@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
 
   frontend:
@@ -27,6 +25,22 @@ services:
       - postgres
       - redis
       - minio
+
+  worker:
+    build:
+      context: ./apps/backend
+
+    command: celery -A app.workers.celery_worker.celery worker --loglevel=info
+
+    volumes:
+      - ./apps/backend:/app
+
+    depends_on:
+      - redis
+      - postgres
+
+    env_file:
+      - ./apps/backend/.env
 
   postgres:
     image: postgres:16
