@@ -2,6 +2,7 @@ from app.database.session import Base
 from app.models.candidate import Candidate
 from app.models.job import Job
 from logging.config import fileConfig
+from app.models.resume_profile import ResumeProfile
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
